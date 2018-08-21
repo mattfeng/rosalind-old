@@ -1,17 +1,19 @@
+def product(l):
+    return reduce(lambda a, b: a * b, l)
 
-def nprob(gen1, gen2):
-    # genX = genotype
-    probs = {}
-    for allele1 in gen1:
-        for allele2 in gen2:
-            try:
-                probs[allele1 + allele2] += 1. / 4.
-            except:
-                probs[allele1 + allele2] = 1. / 4.
-    return probs
+def choose(n, r):
+    return product(range(n, n - r, -1)) / product(range(1, r + 1))
+    
+def predict_AaBb(gen_k, n):
+    # Key insight:
+    # No matter what genotype an organism is, when mating with a AaBb,
+    # the probability that the offspring will be heterozygous AaBb
+    # is ALWAYS 25%.
 
-def predict_AaBb(K, N):
-    # K = number of generations
-    # N = lower bound of AaBb count
-    for i in xrange(1000000):
-        for gen in xrange(K):
+    n_children = 2 ** gen_k
+    ans = 0
+    for i in range(n, n_children + 1):
+        ans += choose(n_children, i) * (0.25 ** i) * (0.75 ** (n_children - i))
+    return ans
+
+print(predict_AaBb(7, 31))
